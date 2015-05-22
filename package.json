@@ -1,7 +1,7 @@
 {
   "name": "open-this",
   "main": "./lib/main",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Open file under cursor like `gf`(Vim), `C-x C-f`(Emacs)",
   "keywords": [],
   "activationCommands": {
