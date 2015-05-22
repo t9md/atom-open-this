@@ -10,25 +10,46 @@ module.exports =
       'open-this:split-down':  => @open('down')
       'open-this:split-right': => @open('right')
 
+  getExtensions: (editor) ->
+    scopeName = editor.getGrammar().scopeName
+    grammar   = atom.grammars.grammarForScopeName(scopeName)
+    grammar.fileTypes or []
+
+  detectFilePath: (filePath) ->
+    #
+    # Return first existing filePath from following list.
+    # * filePath is absolute filePath under cursor.
+    #  [
+    #   filePath with exntame_of_current_file,
+    #   filePath with extensions.. from current Grammar::fileTypes
+    #   fileName
+    #  ]
+    editor    = atom.workspace.getActiveTextEditor()
+    extname   = path.extname editor.getURI()
+
+    extensions = []
+    extensions.push extname.substr(1) if extname
+    extensions = extensions.concat @getExtensions(editor)
+    files      = extensions.map (ext) -> "#{filePath}.#{ext}"
+
+    # Last candidate is original filePath
+    files.push filePath
+
+    for file in files
+      if fs.existsSync(file)
+        return file
+
   open: (split) ->
     editor  = atom.workspace.getActiveTextEditor()
-    URI     = editor.getURI()
-    extname = path.extname URI
-    baseDir = path.dirname URI
 
-    range = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
+    URI      = editor.getURI()
+    baseDir  = path.dirname URI
+    range    = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
+    fileName = editor.getTextInBufferRange(range)
 
-    fileName             = editor.getTextInBufferRange(range)
-    fileWithoutExtension = path.resolve(baseDir, fileName)
-    fileWithExtension    = fileWithoutExtension + extname
+    return unless fileName
 
-    candidates = [fileWithExtension, fileWithoutExtension]
-
-    for filePath in candidates
-      if fs.existsSync filePath
-        break
-      else
-        filePath = null
+    filePath = @detectFilePath path.resolve(baseDir, fileName)
 
     return unless filePath
 
