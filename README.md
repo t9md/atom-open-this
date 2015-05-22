@@ -1,10 +1,9 @@
-# open-this package
+# open-this
 
 Open file under cursor.  
 Like `gf` on Vim, `C-x C-f` on Emacs.
 
-
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![gif](https://raw.githubusercontent.com/t9md/t9md/6b2b3a97f1309cab5d460358e4f148da7a6714ac/img/atom-open-this.gif)
 
 # Features
 
