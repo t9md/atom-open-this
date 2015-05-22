@@ -1,0 +1,20 @@
+{
+  "name": "open-this",
+  "main": "./lib/main",
+  "version": "0.0.0",
+  "description": "Open file under cursor like `gf`(Vim), `C-x C-f`(Emacs)",
+  "keywords": [],
+  "activationCommands": {
+    "atom-workspace": [
+      "open-this:here",
+      "open-this:split-down",
+      "open-this:split-right"
+    ]
+  },
+  "repository": "https://github.com/t9md/atom-open-this",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,13 @@
+# I don't want to set default keymap.
+# This is my principle for every my Atom Packages and Vim plugins I've created till now.
+
+
+# 'atom-text-editor.vim-mode.command-mode':
+#   'g f':      'open-this:here'
+#   'ctrl-w f': 'open-this:split-down'
+#   'ctrl-w F': 'open-this:split-right'
+#
+# 'atom-workspace atom-text-editor:not([mini])':
+#   'cmd-k f f': 'open-this:here'
+#   'cmd-k f d': 'open-this:split-down'
+#   'cmd-k f r': 'open-this:split-right'
