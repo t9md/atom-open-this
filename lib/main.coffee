@@ -11,7 +11,6 @@ module.exports =
       'open-this:split-right': => @open('right')
 
   open: (split) ->
-    console.log split
     editor  = atom.workspace.getActiveTextEditor()
     URI     = editor.getURI()
     extname = path.extname URI
@@ -20,7 +19,6 @@ module.exports =
     range     = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
     fileName  = editor.getTextInBufferRange(range)
     filePath  = path.resolve(baseDir, fileName) + extname
-    console.log filePath
 
     return unless fs.existsSync(filePath)
 
