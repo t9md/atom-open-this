@@ -16,11 +16,21 @@ module.exports =
     extname = path.extname URI
     baseDir = path.dirname URI
 
-    range     = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
-    fileName  = editor.getTextInBufferRange(range)
-    filePath  = path.resolve(baseDir, fileName) + extname
+    range = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
 
-    return unless fs.existsSync(filePath)
+    fileName             = editor.getTextInBufferRange(range)
+    fileWithoutExtension = path.resolve(baseDir, fileName)
+    fileWithExtension    = fileWithoutExtension + extname
+
+    candidates = [fileWithExtension, fileWithoutExtension]
+
+    for filePath in candidates
+      if fs.existsSync filePath
+        break
+      else
+        filePath = null
+
+    return unless filePath
 
     activePane = atom.workspace.getActivePane()
     switch split
