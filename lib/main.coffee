@@ -15,17 +15,16 @@ module.exports =
     grammar   = atom.grammars.grammarForScopeName(scopeName)
     grammar.fileTypes or []
 
+  # Return first existing filePath from following list.
+  # * filePath is absolute filePath under cursor.
+  #  [
+  #   filePath with exntame_of_current_file,
+  #   filePath with extensions.. from current Grammar::fileTypes
+  #   fileName
+  #  ]
   detectFilePath: (filePath) ->
-    #
-    # Return first existing filePath from following list.
-    # * filePath is absolute filePath under cursor.
-    #  [
-    #   filePath with exntame_of_current_file,
-    #   filePath with extensions.. from current Grammar::fileTypes
-    #   fileName
-    #  ]
-    editor    = atom.workspace.getActiveTextEditor()
-    extname   = path.extname editor.getURI()
+    editor  = atom.workspace.getActiveTextEditor()
+    extname = path.extname editor.getURI()
 
     extensions = []
     extensions.push extname.substr(1) if extname
@@ -36,21 +35,20 @@ module.exports =
     files.push filePath
 
     for file in files
-      if fs.existsSync(file)
+      if fs.existsSync(file) and fs.lstatSync(fs.realpathSync(file))?.isFile()
         return file
 
   open: (split) ->
     editor  = atom.workspace.getActiveTextEditor()
 
     URI      = editor.getURI()
-    baseDir  = path.dirname URI
     range    = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
     fileName = editor.getTextInBufferRange(range)
-
     return unless fileName
 
-    filePath = @detectFilePath path.resolve(baseDir, fileName)
+    baseDir = path.dirname URI
 
+    filePath = @detectFilePath path.resolve(baseDir, fileName)
     return unless filePath
 
     activePane = atom.workspace.getActivePane()
