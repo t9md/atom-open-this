@@ -1,5 +1,5 @@
 path = require 'path'
-fs   = require 'fs'
+fs   = require 'fs-plus'
 
 module.exports =
   wordRegex: /[-\w/\.]+/
@@ -13,48 +13,54 @@ module.exports =
   getExtensions: (editor) ->
     scopeName = editor.getGrammar().scopeName
     grammar   = atom.grammars.grammarForScopeName(scopeName)
-    grammar.fileTypes or []
+    grammar.fileTypes ? []
 
   # Return first existing filePath from following list.
-  # * filePath is absolute filePath under cursor.
   #  [
-  #   filePath with exntame_of_current_file,
-  #   filePath with extensions.. from current Grammar::fileTypes
-  #   fileName
+  #   File with same extension to current file's
+  #   File with extensions... from current Grammar.fileTypes
+  #   File
+  #   File have same basename
   #  ]
-  detectFilePath: (filePath) ->
-    editor  = atom.workspace.getActiveTextEditor()
-    extname = path.extname editor.getURI()
+  detectFilePath: (file) ->
+    editor   = atom.workspace.getActiveTextEditor()
+    extname  = path.extname editor.getURI()
+    dirName  = path.dirname file
+    baseName = path.basename file, extname
 
     extensions = []
+    # ext of current file.
     extensions.push extname.substr(1) if extname
+    # ext of Grammar.fileTypes
     extensions = extensions.concat @getExtensions(editor)
-    files      = extensions.map (ext) -> "#{filePath}.#{ext}"
+    files = extensions.map (ext) -> "#{file}.#{ext}"
 
-    # Last candidate is original filePath
-    files.push filePath
+    # file as-is
+    files.push file
 
+    # Search existing file from file list.
     for file in files
       if fs.existsSync(file) and fs.lstatSync(fs.realpathSync(file))?.isFile()
         return file
 
+    # Search file have same basename.
+    for file in fs.listSync(dirName)
+      if path.basename(file, path.extname(file)) is baseName
+        return file
+
   open: (split) ->
     editor  = atom.workspace.getActiveTextEditor()
+    URI     = editor.getURI()
+    range   = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
+    dirName = path.dirname URI
 
-    URI      = editor.getURI()
-    range    = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
-    fileName = editor.getTextInBufferRange(range)
-    return unless fileName
+    return unless fileName = editor.getTextInBufferRange(range)
+    return unless filePath = @detectFilePath path.resolve(dirName, fileName)
 
-    baseDir = path.dirname URI
-
-    filePath = @detectFilePath path.resolve(baseDir, fileName)
-    return unless filePath
-
-    activePane = atom.workspace.getActivePane()
+    pane = atom.workspace.getActivePane()
     switch split
-      when 'down'  then activePane.splitDown()
-      when 'right' then activePane.splitRight()
+      when 'down'  then pane.splitDown()
+      when 'right' then pane.splitRight()
 
     atom.workspace.open(filePath, searchAllPanes: false).done ->
 

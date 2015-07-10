@@ -14,7 +14,7 @@ Like `gf` on Vim, `C-x C-f` on Emacs.
 
 1. Place cursor over filename on source code like `./styles-element` in following code.
 2. Invoke `open-this:here` via command palette or keymap.
-3. file `./styles-element` opend on same pane.
+3. file `./styles-element` opened on same pane.
 
 ```coffeescript
 StylesElement = require './styles-element'
@@ -43,5 +43,33 @@ e.g.
   'ctrl-w F': 'open-this:split-right'
 ```
 
+# Helper package
+
+* [goto-scope](https://atom.io/packages/goto-scope)
+
+Now you can now file under cursor by this package.  
+But you still need to move cursor to string containing filename.  
+Fortunately, filename have always have string scope information on Atom(you can see by `editor:log-cursor-scope` command).  
+goto-scope helps you to move cursor by using scope information.
+You can put cursor to next/prev string scope.
+
+## Expample
+
+```coffeescript
+'atom-text-editor.vim-mode.command-mode':
+  "s": 'goto-scope:string-next',
+```
+
+And set goto-scope's `offsetString` to 3.
+
+By this seting you can move curor position `from` to `to` with one `s` key.  
+Then you can use `gf` to open file.
+
+```coffeescript
+# from                     to
+#  v                       v
+StylesElement = require './styles-element'
+```
+
 # TODO
-- [ ] Precise language specifc filname and extname determination.
+- [ ] Library load path based on language?
