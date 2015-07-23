@@ -37,7 +37,7 @@ e.g.
 * if you are using  [vim-mode](https://atom.io/packages/vim-mode), following are suggestion which I use.
 
 ```coffeescript
-'atom-text-editor.vim-mode.command-mode':
+'atom-text-editor.vim-mode.normal-mode':
   'g f':      'open-this:here'
   'ctrl-w f': 'open-this:split-down'
   'ctrl-w F': 'open-this:split-right'

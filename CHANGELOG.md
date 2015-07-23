@@ -1,3 +1,6 @@
+## 0.1.5 - Doc
+- Update readme to follow vim-mode's rename from command-mode to normal-mode
+
 ## 0.1.4 - Improve
 * Now detect file with different extension if basename is same.
 
