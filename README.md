@@ -37,7 +37,7 @@ No default keymap, copy and paste to your `keymap.cson` from following example.
 * [vim-mode](https://atom.io/packages/vim-mode) user.
 
 ```coffeescript
-'atom-text-editor.vim-mode-plus.normal-mode':
+'atom-text-editor.vim-mode.normal-mode':
   'g f':      'open-this:here'
   'ctrl-w f': 'open-this:split-down'
   'ctrl-w F': 'open-this:split-right'
@@ -46,7 +46,7 @@ No default keymap, copy and paste to your `keymap.cson` from following example.
 * [vim-mode-plus](https://atom.io/packages/vim-mode-plus) user.
 
 ```coffeescript
-'atom-text-editor.vim-mode.normal-mode':
+'atom-text-editor.vim-mode-plus.normal-mode':
   'g f':      'open-this:here'
   'ctrl-w f': 'open-this:split-down'
   'ctrl-w F': 'open-this:split-right'
