@@ -9,7 +9,7 @@ Like `gf` on Vim, `C-x C-f` on Emacs.
 
 1. Place cursor on filename in text like on `./styles-element` in following code.
 2. Invoke `open-this:here` via command palette or keymap.
-3. file `./styles-element` opened in same pane.
+3. file `./styles-element` opened in current pane.
 
 ```coffeescript
 StylesElement = require './styles-element'
