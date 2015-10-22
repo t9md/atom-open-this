@@ -70,6 +70,3 @@ Then you can use `gf` to open file.
 #  v                       v
 StylesElement = require './styles-element'
 ```
-
-# TODO
-- [ ] Library load path based on language?

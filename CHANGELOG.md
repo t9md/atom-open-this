@@ -1,3 +1,6 @@
+## 0.1.6 - WIP
+- Add spec
+
 ## 0.1.5 - Doc
 - Update readme to follow vim-mode's rename from command-mode to normal-mode
 
