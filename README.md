@@ -5,11 +5,6 @@ Like `gf` on Vim, `C-x C-f` on Emacs.
 
 ![gif](https://raw.githubusercontent.com/t9md/t9md/27a8b5d0b7dc4e080e615467e0daf3727c991835/img/atom-open-this.gif)
 
-# Features
-
-* Open file under cursor on same pane(or spilt pane).
-* Currently not search library search path. Supported only relative path from current editor's file path.
-
 # How to use.
 
 1. Place cursor on filename in text like on `./styles-element` in following code.
