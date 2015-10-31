@@ -61,6 +61,6 @@ module.exports =
       when 'down' then pane.splitDown()
       when 'right' then pane.splitRight()
 
-    atom.workspace.open(filePath, searchAllPanes: false).done ->
+    atom.workspace.open(filePath, searchAllPanes: false)
 
   deactivate: ->
