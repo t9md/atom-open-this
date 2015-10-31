@@ -1,3 +1,6 @@
+## 0.1.7 - fix
+- Deprecation warning fix from Atom v1.1.0
+
 ## 0.1.6 - Minor improve
 - Add spec
 - Refactoring
