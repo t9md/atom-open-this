@@ -19,32 +19,40 @@ module.exports =
       'open-this:split-down': => @open('down')
       'open-this:split-right': => @open('right')
 
-  getFiles: (file) ->
+  getFiles: (dir, file) ->
     editor = atom.workspace.getActiveTextEditor()
     exts = []
 
     if extname = path.extname(editor.getURI()) # ext of current file.
       exts.push extname.substr(1)
 
+    files = [path.resolve(dir, file)]
+
     exts = exts.concat getExtensions(editor)
-    files = ("#{file}.#{ext}" for ext in exts)
-    files.push file
-    _.uniq files
+    files.unshift ("#{filePath}.#{ext}" for ext in exts for filePath in files)
+    _.uniq _.flatten files
 
   # Return first existing filePath in following order.
   #  - File with same extension to current file's
   #  - File with extensions... from current Grammar.fileTypes
   #  - File
   #  - File have same basename
-  detectFilePath: (filePath) ->
+  detectFilePath: (dirName, filePath) ->
     # Search existing file from file list.
-    file = _.detect @getFiles(filePath), (f) ->
+    file = _.detect @getFiles(dirName, filePath), (f) ->
       fs.existsSync(f) and fs.lstatSync(fs.realpathSync(f))?.isFile()
     return file if file?
 
     # Search file have same basename.
-    baseName = getBaseName(filePath)
-    _.detect fs.listSync(path.dirname(filePath)), (f) ->
+    file = path.resolve(dirName, filePath)
+    baseName = getBaseName(file)
+    file = _.detect fs.listSync(path.dirname(file)), (f) ->
+      getBaseName(f) is baseName
+    return file if file?
+
+    file = path.resolve(dirName, filePath.replace(/^[ab]\//, ''))
+    baseName = getBaseName(file)
+    _.detect fs.listSync(path.dirname(file)), (f) ->
       getBaseName(f) is baseName
 
   open: (split) ->
@@ -54,7 +62,7 @@ module.exports =
 
     dirName = path.dirname(editor.getURI())
 
-    return unless filePath = @detectFilePath(path.resolve(dirName, fileName))
+    return unless filePath = @detectFilePath(dirName, fileName)
 
     pane = atom.workspace.getActivePane()
     switch split

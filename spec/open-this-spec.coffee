@@ -68,11 +68,11 @@ describe "open-this", ->
   describe "::getFiles", ->
     describe "CoffeeScript editor", ->
       it 'returns candidate file paths', ->
-        [first, other..., last] = main.getFiles("sample")
-        expect(first).toBe "sample.coffee"
-        expect("sample.Cakefile" in other).toBe true
-        expect("sample.cson" in other).toBe true
-        expect(last).toBe "sample"
+        [first, other..., last] = main.getFiles("/", "sample")
+        expect(first).toBe "/sample.coffee"
+        expect("/sample.Cakefile" in other).toBe true
+        expect("/sample.cson" in other).toBe true
+        expect(last).toBe "/sample"
 
     describe "Ruby editor", ->
       beforeEach ->
@@ -84,11 +84,11 @@ describe "open-this", ->
           editorElement = atom.views.getView(e)
 
       it 'returns candidate file paths', ->
-        [first, other..., last] = main.getFiles("sample")
-        expect(first).toBe "sample.rb"
-        expect("sample.rake" in other).toBe true
-        expect("sample.ru" in other).toBe true
-        expect(last).toBe "sample"
+        [first, other..., last] = main.getFiles("/", "sample")
+        expect(first).toBe "/sample.rb"
+        expect("/sample.rake" in other).toBe true
+        expect("/sample.ru" in other).toBe true
+        expect(last).toBe "/sample"
 
   describe "open-this:here", ->
     describe "Coffee editor", ->
