@@ -10,13 +10,6 @@ getExtensions = (editor) ->
   grammar   = atom.grammars.grammarForScopeName(scopeName)
   grammar.fileTypes ? []
 
-getFilePaths = (dir, file, editor) ->
-  scopeName = editor.getGrammar().scopeName
-  files = [file]
-  if scopeName == 'source.diff' or editor.getURI().endsWith('.diff')
-    files.push file.replace(/^[ab]\//, '')
-  (path.resolve(dir, file) for file in files)
-
 module.exports =
   wordRegex: /[-\w/\.]+/
 
@@ -33,7 +26,7 @@ module.exports =
     if extname = path.extname(editor.getURI()) # ext of current file.
       exts.push extname.substr(1)
 
-    files = getFilePaths(dir, file, editor)
+    files = [path.resolve(dir, file)]
 
     exts = exts.concat getExtensions(editor)
     files.unshift ("#{filePath}.#{ext}" for ext in exts for filePath in files)
@@ -51,9 +44,15 @@ module.exports =
     return file if file?
 
     # Search file have same basename.
-    filePath = path.resolve(dirName, filePath)
-    baseName = getBaseName(filePath)
-    _.detect fs.listSync(path.dirname(filePath)), (f) ->
+    file = path.resolve(dirName, filePath)
+    baseName = getBaseName(file)
+    file = _.detect fs.listSync(path.dirname(file)), (f) ->
+      getBaseName(f) is baseName
+    return file if file?
+
+    file = path.resolve(dirName, filePath.replace(/^[ab]\//, ''))
+    baseName = getBaseName(file)
+    _.detect fs.listSync(path.dirname(file)), (f) ->
       getBaseName(f) is baseName
 
   open: (split) ->
