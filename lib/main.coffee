@@ -13,7 +13,7 @@ getExtensions = (editor) ->
 getFilePaths = (dir, file, editor) ->
   scopeName = editor.getGrammar().scopeName
   files = [file]
-  if scopeName = 'source.diff'
+  if scopeName == 'source.diff' or editor.getURI().endsWith('.diff')
     files.push file.replace(/^[ab]\//, '')
   (path.resolve(dir, file) for file in files)
 
