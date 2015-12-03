@@ -1,3 +1,6 @@
+## 0.1.8
+- Support git-diff style file string(try to open by removing a/, b/ part) suggested by @bwinton.
+
 ## 0.1.7 - fix
 - Deprecation warning fix from Atom v1.1.0
 

@@ -5,9 +5,8 @@ _ = require 'underscore-plus'
 getBaseName = (file) ->
   path.basename(file, path.extname(file))
 
-getExtensions = (editor) ->
-  scopeName = editor.getGrammar().scopeName
-  grammar   = atom.grammars.grammarForScopeName(scopeName)
+getExtensionsForScope = (scopeName) ->
+  grammar = atom.grammars.grammarForScopeName(scopeName)
   grammar.fileTypes ? []
 
 module.exports =
@@ -26,7 +25,7 @@ module.exports =
     if extname = path.extname(editor.getURI()) # ext of current file.
       exts.push extname.substr(1)
 
-    exts = exts.concat getExtensions(editor)
+    exts = exts.concat getExtensionsForScope(editor.getGrammar().scopeName)
     files = ("#{file}.#{ext}" for ext in exts)
     files.push file
     _.uniq files
@@ -47,15 +46,24 @@ module.exports =
     _.detect fs.listSync(path.dirname(filePath)), (f) ->
       getBaseName(f) is baseName
 
+  getFilePath: (editor, fileName) ->
+    dirName = path.dirname(editor.getURI())
+
+    if filePath = @detectFilePath(path.resolve(dirName, fileName))
+      return filePath
+
+    if fileName.match(/^[ab]\//)
+      # Try by removing a, b directory(git diff output) from original fileName.
+      fileName = fileName.replace(/^[ab]\//, '')
+      return @detectFilePath(path.resolve(dirName, fileName))
+    null
+
   open: (split) ->
     editor = atom.workspace.getActiveTextEditor()
     range = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
     return unless fileName = editor.getTextInBufferRange(range)
 
-    dirName = path.dirname(editor.getURI())
-
-    return unless filePath = @detectFilePath(path.resolve(dirName, fileName))
-
+    return unless filePath = @getFilePath(editor, fileName)
     pane = atom.workspace.getActivePane()
     switch split
       when 'down' then pane.splitDown()

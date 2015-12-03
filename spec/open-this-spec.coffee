@@ -112,6 +112,16 @@ describe "open-this", ->
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/file2')
 
+      it 'open file by removing leading "a" directory(git-diff output)', ->
+        editor.setCursorBufferPosition [8, 2]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/file1.json')
+
+      it 'open file by removing leading "b" directory(git-diff output)', ->
+        editor.setCursorBufferPosition [9, 2]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/file2')
+
     describe "Ruby editor", ->
       beforeEach ->
         topFile = atom.project.resolvePath "top.rb"
