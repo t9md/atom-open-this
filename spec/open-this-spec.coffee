@@ -122,6 +122,27 @@ describe "open-this", ->
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/file2')
 
+      describe "open file from relative to project root", ->
+        beforeEach ->
+          topFile = atom.project.resolvePath "dir1/from-project-root.coffee"
+          options = {scope: 'source.coffee', pack: 'language-coffee-script'}
+          openFile topFile, options, (e) ->
+            editor = e
+            editor.setCursorBufferPosition [0, 0]
+            editorElement = atom.views.getView(e)
+
+        # In spec, atom.project.getPaths() is set to
+        #  "ROOT_DIR/atom-open-this/spec/fixtures"
+        it 'open file from relative to current project root case-1', ->
+          editor.setCursorBufferPosition [2, 2]
+          dispatchCommand editorElement, 'open-this:here', ->
+            expect(getPath()).toBe filePathFor('dir1/dir1.coffee')
+
+        it 'open file from relative to current project root case-2', ->
+          editor.setCursorBufferPosition [3, 2]
+          dispatchCommand editorElement, 'open-this:here', ->
+            expect(getPath()).toBe filePathFor('top.rb')
+
     describe "Ruby editor", ->
       beforeEach ->
         topFile = atom.project.resolvePath "top.rb"

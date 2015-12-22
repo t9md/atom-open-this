@@ -52,10 +52,14 @@ module.exports =
     if filePath = @detectFilePath(path.resolve(dirName, fileName))
       return filePath
 
+    # Surpport git diff output
     if fileName.match(/^[ab]\//)
-      # Try by removing a, b directory(git diff output) from original fileName.
       fileName = fileName.replace(/^[ab]\//, '')
       return @detectFilePath(path.resolve(dirName, fileName))
+
+    # Search from projectRoot
+    for dir in atom.project.getPaths() when dirName.startsWith(dir)
+      return @detectFilePath(path.resolve(dir, fileName))
     null
 
   open: (split) ->
