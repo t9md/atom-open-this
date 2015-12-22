@@ -1,3 +1,6 @@
+## 0.1.9
+- New: Search from project root dir suggested by @bronson #2.
+
 ## 0.1.8
 - Support git-diff style file string(try to open by removing a/, b/ part) suggested by @bwinton.
 
