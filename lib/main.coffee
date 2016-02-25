@@ -10,7 +10,7 @@ getExtensionsForScope = (scopeName) ->
   grammar.fileTypes ? []
 
 module.exports =
-  wordRegex: /[-\w/\.]+/
+  wordRegex: /[-\w/\.]+(:\d+){0,2}/
 
   activate: (state) ->
     atom.commands.add 'atom-text-editor',
@@ -67,12 +67,21 @@ module.exports =
     range = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
     return unless fileName = editor.getTextInBufferRange(range)
 
+    [fileName, line, column] = fileName.split ":"
+    line = line || 1
+    column = column || 1
+
     return unless filePath = @getFilePath(editor, fileName)
     pane = atom.workspace.getActivePane()
     switch split
       when 'down' then pane.splitDown()
       when 'right' then pane.splitRight()
 
-    atom.workspace.open(filePath, searchAllPanes: false)
+    options = {
+        searchAllPanes: false,
+        initialLine: line-1,
+        initialColumn: column-1
+    }
+    atom.workspace.open(filePath, options)
 
   deactivate: ->
