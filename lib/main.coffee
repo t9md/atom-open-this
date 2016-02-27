@@ -9,14 +9,18 @@ getExtensionsForScope = (scopeName) ->
   grammar = atom.grammars.grammarForScopeName(scopeName)
   grammar.fileTypes ? []
 
-module.exports =
-  wordRegex: /[-\w/\.]+(:\d+){0,2}/
+commandsDisposer = null
+FileNameRegexp = /[-\w/\.]+(:\d+){0,2}/g
 
+module.exports =
   activate: (state) ->
-    atom.commands.add 'atom-text-editor',
+    commandsDisposer = atom.commands.add 'atom-text-editor',
       'open-this:here': => @open()
       'open-this:split-down': => @open('down')
       'open-this:split-right': => @open('right')
+
+  deactivate: ->
+    commandsDisposer?.dispose()
 
   getFiles: (file) ->
     editor = atom.workspace.getActiveTextEditor()
@@ -64,24 +68,24 @@ module.exports =
 
   open: (split) ->
     editor = atom.workspace.getActiveTextEditor()
-    range = editor.getLastCursor().getCurrentWordBufferRange({@wordRegex})
-    return unless fileName = editor.getTextInBufferRange(range)
+    cursorPosition = editor.getCursorBufferPosition()
+    scanRange = editor.bufferRangeForBufferRow(cursorPosition.row)
 
-    [fileName, line, column] = fileName.split ":"
-    line = line || 1
-    column = column || 1
+    fileName = null
+    editor.scanInBufferRange FileNameRegexp, scanRange, ({range, matchText, stop}) ->
+      if range.containsPoint(cursorPosition)
+        fileName = matchText
+        stop()
+    return unless fileName
 
+    [fileName, line, column] = fileName.split(":")
     return unless filePath = @getFilePath(editor, fileName)
     pane = atom.workspace.getActivePane()
     switch split
       when 'down' then pane.splitDown()
       when 'right' then pane.splitRight()
 
-    options = {
-        searchAllPanes: false,
-        initialLine: line-1,
-        initialColumn: column-1
-    }
+    options = {searchAllPanes: false}
+    options.initialLine = (line - 1) if line?
+    options.initialColumn = (column - 1) if column?
     atom.workspace.open(filePath, options)
-
-  deactivate: ->

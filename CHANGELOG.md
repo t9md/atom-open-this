@@ -1,3 +1,6 @@
+## 0.2.0
+- New: Open specific line and column when filename have `:line:column` suffix by @djui
+
 ## 0.1.9
 - New: Search from project root dir suggested by @bronson #2.
 

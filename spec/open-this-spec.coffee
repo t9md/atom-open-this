@@ -122,6 +122,20 @@ describe "open-this", ->
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/file2')
 
+      it 'open file with initial line specified by (:row)', ->
+        editor.setCursorBufferPosition [13, 2]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/file1.json')
+          editor = atom.workspace.getActiveTextEditor()
+          expect(editor.getCursorBufferPosition()).toEqual [1, 0]
+
+      it 'open file with initial line and colum specified by (:row:column)', ->
+        editor.setCursorBufferPosition [14, 2]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/file1.json')
+          editor = atom.workspace.getActiveTextEditor()
+          expect(editor.getCursorScreenPosition()).toEqual [2, 4]
+
       describe "open file from relative to project root", ->
         beforeEach ->
           topFile = atom.project.resolvePath "dir1/from-project-root.coffee"
