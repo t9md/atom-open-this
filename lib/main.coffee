@@ -1,5 +1,5 @@
 path = require 'path'
-fs   = require 'fs-plus'
+fs = require 'fs-plus'
 _ = require 'underscore-plus'
 
 getBaseName = (file) ->
