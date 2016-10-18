@@ -28,10 +28,17 @@ module.exports =
 
     if extname = path.extname(editor.getURI()) # ext of current file.
       exts.push extname.substr(1)
+      
+    scopeName = editor.getGrammar()
 
-    exts = exts.concat getExtensionsForScope(editor.getGrammar().scopeName)
+    exts = exts.concat getExtensionsForScope(scopeName)
     files = ("#{file}.#{ext}" for ext in exts)
     files.push file
+    
+    # Support for sass partials
+    if ~scopeName.indexOf('scss')
+      files.push file.replace(/(.*)\/(.*)$/, "$1/_$2.scss")
+    
     _.uniq files
 
   # Return first existing filePath in following order.
