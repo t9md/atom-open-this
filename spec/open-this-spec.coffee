@@ -203,7 +203,7 @@ describe "open-this", ->
       it 'open file under cursor case-2', ->
         editor.setCursorBufferPosition [2, 12]
         dispatchCommand editorElement, 'open-this:here', ->
-          expect(getPath()).toBe filePathFor('dir1/_file2.scss')
+          expect(getPath()).toBe filePathFor('dir1/_file3.scss')
           
   describe "split cousin", ->
     beforeEach ->

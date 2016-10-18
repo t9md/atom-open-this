@@ -29,7 +29,7 @@ module.exports =
     if extname = path.extname(editor.getURI()) # ext of current file.
       exts.push extname.substr(1)
       
-    scopeName = editor.getGrammar()
+    {scopeName} = editor.getGrammar()
 
     exts = exts.concat getExtensionsForScope(scopeName)
     files = ("#{file}.#{ext}" for ext in exts)
