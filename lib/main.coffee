@@ -28,23 +28,18 @@ module.exports =
 
     if extname = path.extname(editor.getURI()) # ext of current file.
       exts.push extname.substr(1)
-      
+
     {scopeName} = editor.getGrammar()
 
-    exts = exts.concat getExtensionsForScope(scopeName)
+    exts = exts.concat(getExtensionsForScope(scopeName))
     files = ("#{file}.#{ext}" for ext in exts)
-    files.push file
-    
-    # Support for sass partials
-    if ~scopeName.indexOf('scss')
-      files.push file.replace(/(.*)\/(.*)$/, "$1/_$2.scss")
-    
-    _.uniq files
+    files.push(file)
+
+    _.uniq(files)
 
   # Return first existing filePath in following order.
   #  - File with same extension to current file's
   #  - File with extensions... from current Grammar.fileTypes
-  #  - File
   #  - File have same basename
   detectFilePath: (filePath) ->
     # Search existing file from file list.
@@ -62,6 +57,14 @@ module.exports =
 
     if filePath = @detectFilePath(path.resolve(dirName, fileName))
       return filePath
+
+    # If grammar was sass or scss we try to find partial file which
+    # starts with underscore.
+    {scopeName} = editor.getGrammar()
+    if scopeName in ['source.sass', 'source.css.scss']
+      [precedings..., lastPart] = fileName.split(path.sep)
+      sassPartialFileName = path.join([precedings..., "_" + lastPart]...)
+      return @detectFilePath(path.resolve(dirName, sassPartialFileName))
 
     # Surpport git diff output
     if fileName.match(/^[ab]\//)
