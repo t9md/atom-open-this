@@ -186,6 +186,25 @@ describe "open-this", ->
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/file2')
 
+    describe "Sass editor", ->
+      beforeEach ->
+        topFile = atom.project.resolvePath "top.scss"
+        options = {scope: 'source.css.scss', pack: 'language-sass'}
+        openFile topFile, options, (e) ->
+          editor = e
+          editor.setCursorBufferPosition [0, 0]
+          editorElement = atom.views.getView(e)
+      
+      it 'open file under cursor case-1', ->
+        editor.setCursorBufferPosition [1, 12]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/file1.scss')
+      
+      it 'open file under cursor case-2', ->
+        editor.setCursorBufferPosition [2, 12]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/_file3.scss')
+          
   describe "split cousin", ->
     beforeEach ->
       editor.setCursorBufferPosition [1, 3]
