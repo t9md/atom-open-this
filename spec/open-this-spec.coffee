@@ -194,17 +194,36 @@ describe "open-this", ->
           editor = e
           editor.setCursorBufferPosition [0, 0]
           editorElement = atom.views.getView(e)
-      
+
       it 'open file under cursor case-1', ->
         editor.setCursorBufferPosition [1, 12]
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/file1.scss')
-      
+
       it 'open file under cursor case-2', ->
         editor.setCursorBufferPosition [2, 12]
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/_file3.scss')
-          
+
+    describe "JavaScript editor", ->
+      beforeEach ->
+        topFile = atom.project.resolvePath "top.js"
+        options = {scope: 'source.js', pack: 'language-javascript'}
+        openFile topFile, options, (e) ->
+          editor = e
+          editor.setCursorBufferPosition [0, 0]
+          editorElement = atom.views.getView(e)
+
+      it 'case-1: open file under cursor', ->
+        editor.setCursorBufferPosition [0, 21]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/dir1.js')
+
+      it 'case-2: open index.js file under cursor', ->
+        editor.setCursorBufferPosition [1, 25]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/index.js')
+
   describe "split cousin", ->
     beforeEach ->
       editor.setCursorBufferPosition [1, 3]

@@ -43,24 +43,31 @@ module.exports =
   #  - File have same basename
   detectFilePath: (filePath) ->
     # Search existing file from file list.
-    file = _.detect @getFiles(filePath), (f) ->
-      fs.existsSync(f) and fs.lstatSync(fs.realpathSync(f))?.isFile()
-    return file if file?
+    if file = _.detect(@getFiles(filePath), (f) -> fs.isFileSync(f))
+      return file
 
     # Search file have same basename.
     baseName = getBaseName(filePath)
     _.detect fs.listSync(path.dirname(filePath)), (f) ->
-      getBaseName(f) is baseName
+      (getBaseName(f) is baseName) and fs.isFileSync(f)
 
   getFilePath: (editor, fileName) ->
     dirName = path.dirname(editor.getURI())
+
+    {scopeName} = editor.getGrammar()
+    filePath = path.resolve(dirName, fileName)
+    if fs.isDirectorySync(filePath) and scopeName in ['source.js', 'source.coffee']
+      indexFile = switch scopeName
+        when 'source.js' then 'index.js'
+        when 'source.coffee' then 'index.coffee'
+      filePath = path.join(filePath, indexFile)
+      return filePath if fs.isFileSync(filePath)
 
     if filePath = @detectFilePath(path.resolve(dirName, fileName))
       return filePath
 
     # If grammar was sass or scss we try to find partial file which
     # starts with underscore.
-    {scopeName} = editor.getGrammar()
     if scopeName in ['source.sass', 'source.css.scss']
       [precedings..., lastPart] = fileName.split(path.sep)
       sassPartialFileName = path.join([precedings..., "_" + lastPart]...)
