@@ -1,3 +1,6 @@
+## 0.4.0
+- In CoffeeScript and JavaScript file, open `index.js` if filePath found was directory.
+
 ## 0.3.0
 - New: Support sass's partial file which starts `_`(e.g. `_partial.scss`) #6 by @admosity
 
