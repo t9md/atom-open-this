@@ -1,6 +1,7 @@
 path = require 'path'
 fs = require 'fs-plus'
 _ = require 'underscore-plus'
+execSync = require("child_process").execSync
 
 getBaseName = (file) ->
   path.basename(file, path.extname(file))
@@ -13,6 +14,13 @@ commandsDisposer = null
 FileNameRegexp = /[-\w/\.]+(:\d+){0,2}/g
 
 module.exports =
+  config:
+    customSearchCommand:
+      title: 'Custom search command'
+      description: 'Shell command to find files. Executed with environment variable `$FILENAME`. Example: `grealpath $(find . -name $FILENAME)`'
+      type: 'string',
+      default: ''
+
   activate: (state) ->
     commandsDisposer = atom.commands.add 'atom-text-editor',
       'open-this:here': => @open()
@@ -80,7 +88,24 @@ module.exports =
 
     # Search from projectRoot
     for dir in atom.project.getPaths() when dirName.startsWith(dir)
-      return @detectFilePath(path.resolve(dir, fileName))
+      if filePath = @detectFilePath(path.resolve(dir, fileName))
+        return filePath
+
+    # Execute external command defined in config
+    if atom.config.get(PACKAGE_NAME + '.customSearchCommand')
+      for dir in atom.project.getPaths()
+        try
+          if filePath = execSync ['FILENAME=' + fileName,
+                                  atom.config.get('open-this.customSearchCommand')].join(';'), {
+            cwd: dir
+            encoding: 'utf8'
+          }
+            return filePath
+        catch err
+          console.log 'Custom search command returned non-zero exit code.',
+            stdout: err.stdout,
+            stderr: err.stderr
+
     null
 
   open: (split) ->
