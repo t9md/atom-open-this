@@ -92,7 +92,7 @@ module.exports =
         return filePath
 
     # Execute external command defined in config
-    if atom.config.get(PACKAGE_NAME + '.customSearchCommand')
+    if atom.config.get('open-this.customSearchCommand')
       for dir in atom.project.getPaths()
         try
           if filePath = execSync ['FILENAME=' + fileName,
