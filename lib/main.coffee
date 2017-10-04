@@ -2,6 +2,9 @@ path = require 'path'
 fs = require 'fs-plus'
 _ = require 'underscore-plus'
 
+hasCommonJSPackageSemantics = (scopeName, filePath) ->
+  fs.isDirectorySync(filePath) and (scopeName.startsWith('source.js') or scopeName.startsWith('source.coffee'))
+
 getBaseName = (file) ->
   path.basename(file, path.extname(file))
 
@@ -56,12 +59,13 @@ module.exports =
 
     {scopeName} = editor.getGrammar()
     filePath = path.resolve(dirName, fileName)
-    if fs.isDirectorySync(filePath) and scopeName in ['source.js', 'source.coffee']
-      indexFile = switch scopeName
-        when 'source.js' then 'index.js'
-        when 'source.coffee' then 'index.coffee'
-      filePath = path.join(filePath, indexFile)
-      return filePath if fs.isFileSync(filePath)
+    if hasCommonJSPackageSemantics scopeName, filePath
+      potentialIndexFiles = ['index.js', 'index.coffee', 'index.jsx']
+      potentialIndexFilePaths = _.map potentialIndexFiles, (indexFile) ->
+        path.join(filePath, indexFile)
+      potentialIndexFilePath = _.find potentialIndexFilePaths, (indexFilePath) ->
+        fs.isFileSync(indexFilePath)
+      return potentialIndexFilePath if potentialIndexFilePath
 
     if filePath = @detectFilePath(path.resolve(dirName, fileName))
       return filePath

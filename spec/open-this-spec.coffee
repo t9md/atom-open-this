@@ -224,6 +224,35 @@ describe "open-this", ->
         dispatchCommand editorElement, 'open-this:here', ->
           expect(getPath()).toBe filePathFor('dir1/index.js')
 
+      it 'case-3: open index.jsx file under cursor as a fallback', ->
+        editor.setCursorBufferPosition [2, 25]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir2/index.jsx')
+
+    describe "JavaScript JSX editor", ->
+      beforeEach ->
+        topFile = atom.project.resolvePath "top.js"
+        options = {scope: 'source.js.jsx', pack: 'language-babel'}
+        openFile topFile, options, (e) ->
+          editor = e
+          editor.setCursorBufferPosition [0, 0]
+          editorElement = atom.views.getView(e)
+
+      it 'case-1: open file under cursor', ->
+        editor.setCursorBufferPosition [0, 21]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/dir1.js')
+
+      it 'case-2: open index.js file under cursor', ->
+        editor.setCursorBufferPosition [1, 25]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir1/index.js')
+
+      it 'case-3: open index.jsx file under cursor as a fallback', ->
+        editor.setCursorBufferPosition [2, 25]
+        dispatchCommand editorElement, 'open-this:here', ->
+          expect(getPath()).toBe filePathFor('dir2/index.jsx')
+
   describe "split cousin", ->
     beforeEach ->
       editor.setCursorBufferPosition [1, 3]
