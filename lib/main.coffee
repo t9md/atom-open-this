@@ -3,6 +3,7 @@ fs = require 'fs-plus'
 _ = require 'underscore-plus'
 
 hasCommonJSPackageSemantics = (scopeName, filePath) ->
+  # why use `startsWith` is to make `source.js.jsx` true.
   fs.isDirectorySync(filePath) and (scopeName.startsWith('source.js') or scopeName.startsWith('source.coffee'))
 
 getBaseName = (file) ->
@@ -46,12 +47,12 @@ module.exports =
   #  - File have same basename
   detectFilePath: (filePath) ->
     # Search existing file from file list.
-    if file = _.detect(@getFiles(filePath), (f) -> fs.isFileSync(f))
+    if file = @getFiles(filePath).find((f) -> fs.isFileSync(f))
       return file
 
     # Search file have same basename.
     baseName = getBaseName(filePath)
-    _.detect fs.listSync(path.dirname(filePath)), (f) ->
+    fs.listSync(path.dirname(filePath)).find (f) ->
       (getBaseName(f) is baseName) and fs.isFileSync(f)
 
   getFilePath: (editor, fileName) ->
@@ -60,12 +61,11 @@ module.exports =
     {scopeName} = editor.getGrammar()
     filePath = path.resolve(dirName, fileName)
     if hasCommonJSPackageSemantics scopeName, filePath
-      potentialIndexFiles = ['index.js', 'index.coffee', 'index.jsx']
-      potentialIndexFilePaths = _.map potentialIndexFiles, (indexFile) ->
-        path.join(filePath, indexFile)
-      potentialIndexFilePath = _.find potentialIndexFilePaths, (indexFilePath) ->
-        fs.isFileSync(indexFilePath)
-      return potentialIndexFilePath if potentialIndexFilePath
+      extensions = ['.js', '.coffee', '.jsx']
+      indexFilePath = extensions
+        .map (ext) -> path.join(filePath, "index#{ext}")
+        .find (indexFilePath) -> fs.isFileSync(indexFilePath)
+      return indexFilePath if indexFilePath
 
     if filePath = @detectFilePath(path.resolve(dirName, fileName))
       return filePath
