@@ -1,3 +1,7 @@
+## 0.5.0
+- New: #13 Open `index.jsx` if there is no `index.js` by iammerrick
+- Maintenance: Convert CoffeeScript to JavaScript.
+
 ## 0.4.0
 - In CoffeeScript and JavaScript file, open `index.js` if filePath found was directory.
 
