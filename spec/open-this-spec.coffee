@@ -64,10 +64,10 @@ describe "open-this", ->
     waitsForPromise ->
       activationPromise
 
-  describe "::getFiles", ->
+  describe "::getCandidateFiles", ->
     describe "CoffeeScript editor", ->
       it 'returns candidate file paths', ->
-        [first, other..., last] = main.getFiles("sample")
+        [first, other..., last] = main.getCandidateFiles("sample")
         expect(first).toBe "sample.coffee"
         expect("sample.Cakefile" in other).toBe true
         expect("sample.cson" in other).toBe true
@@ -83,7 +83,7 @@ describe "open-this", ->
           editorElement = atom.views.getView(e)
 
       it 'returns candidate file paths', ->
-        [first, other..., last] = main.getFiles("sample")
+        [first, other..., last] = main.getCandidateFiles("sample")
         expect(first).toBe "sample.rb"
         expect("sample.rake" in other).toBe true
         expect("sample.ru" in other).toBe true
