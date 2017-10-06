@@ -1,4 +1,3 @@
-_  = require 'underscore-plus'
 path = require 'path'
 fs = require 'fs-plus'
 
