@@ -232,7 +232,7 @@ describe "open-this", ->
     describe "JavaScript JSX editor", ->
       beforeEach ->
         topFile = atom.project.resolvePath "top.js"
-        options = {scope: 'source.js.jsx', pack: 'language-babel'}
+        options = {scope: 'source.js', pack: 'language-javascript'}
         openFile topFile, options, (e) ->
           editor = e
           editor.setCursorBufferPosition [0, 0]
@@ -261,7 +261,7 @@ describe "open-this", ->
       it "open file in pane split-down", ->
         dispatchSplitCommand editorElement, 'open-this:split-down', ->
           expect(getPath()).toBe filePathFor('dir1/dir1.coffee')
-          panes = atom.workspace.getPanes()
+          panes = atom.workspace.getCenter().getPanes()
           activePane = atom.workspace.getActivePane()
 
           expect(panes).toHaveLength 2
@@ -272,7 +272,7 @@ describe "open-this", ->
       it "open file in pane split-right", ->
         dispatchSplitCommand editorElement, 'open-this:split-right', ->
           expect(getPath()).toBe filePathFor('dir1/dir1.coffee')
-          panes = atom.workspace.getPanes()
+          panes = atom.workspace.getCenter().getPanes()
           activePane = atom.workspace.getActivePane()
 
           expect(panes).toHaveLength 2
